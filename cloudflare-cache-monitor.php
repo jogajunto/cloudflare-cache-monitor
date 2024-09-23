@@ -26,9 +26,9 @@ define('CCM_PLUGIN_URL', plugin_dir_url(__FILE__));
 /**
  * Load Composer autoloader.
  */
-if (file_exists(dirname(__DIR__, 3) . '/vendor/autoload.php')) {
+if (file_exists(dirname(__DIR__, 4) . '/vendor/autoload.php')) {
     // Autoload of the main project (root)
-    require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
+    require_once dirname(__DIR__, 4) . '/vendor/autoload.php';
 } elseif (file_exists(__DIR__ . '/vendor/autoload.php')) {
     // Local autoload of the plugin, if the plugin is standalone
     require_once __DIR__ . '/vendor/autoload.php';
