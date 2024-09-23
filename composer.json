@@ -1,0 +1,29 @@
+{
+  "name": "codenz-br/cloudflare-cache-monitor",
+  "description": "A plugin to monitor Cloudflare cache purges and validate content updates for WordPress sites.",
+  "autoload": {
+    "psr-4": {
+      "CloudflareCacheMonitor\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Rafael de Araujo",
+      "email": "rafaeldearaujop95@gmail.com"
+    }
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "johnpbloch/wordpress-core-installer": true
+    }
+  },
+  "extra": {
+    "wordpress-install-dir": "vendor/wordpress"
+  },
+  "require-dev": {
+    "johnpbloch/wordpress": "^6.6"
+  }
+}
