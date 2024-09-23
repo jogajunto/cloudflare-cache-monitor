@@ -73,7 +73,7 @@ class CacheMonitor
     public function handle_purge_by_url($urls, $post_id)
     {
         // Get current timestamp.
-        $purge_time = time();
+        $purge_time = strtotime(gmdate('Y-m-d H:i:s'));
 
         // Data to be sent to the Worker.
         $data = array(
