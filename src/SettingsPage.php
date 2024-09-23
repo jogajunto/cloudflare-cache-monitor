@@ -1,58 +1,78 @@
 <?php
 
+/**
+ * SettingsPage Class
+ *
+ * @package CloudflareCacheMonitor
+ */
+
 namespace CloudflareCacheMonitor;
+
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class SettingsPage
 {
+    /**
+     * Singleton instance.
+     *
+     * @var SettingsPage
+     */
     private static $instance = null;
 
+    /**
+     * Constructor.
+     */
     private function __construct()
     {
-        // Hook para adicionar a página de configurações
-        add_action('admin_menu', [$this, 'addSettingsPage']);
-        // Hook para registrar as configurações
-        add_action('admin_init', [$this, 'registerSettings']);
-        // Hook para interceptar a validação e salvamento dos dados
-        add_filter('pre_update_option_codenz_ccm_options', [$this, 'preUpdateOptions'], 10, 2);
+        // Hook to add the settings page.
+        add_action('admin_menu', array($this, 'add_settings_page'));
+        // Hook to register settings.
+        add_action('admin_init', array($this, 'register_settings'));
+        // Hook to intercept the validation and saving of data.
+        add_filter('pre_update_option_ccm_options', array($this, 'pre_update_options'), 10, 2);
     }
 
     /**
-     * Método para obter a instância única da classe (Singleton)
+     * Get the singleton instance.
+     *
+     * @return SettingsPage
      */
-    public static function getInstance()
+    public static function get_instance()
     {
-        if (self::$instance === null) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
     /**
-     * Adiciona a página de configurações
+     * Add the settings page.
      */
-    public function addSettingsPage()
+    public function add_settings_page()
     {
         add_options_page(
-            'Cloudflare Cache Monitor',
-            'Cloudflare Cache Monitor',
+            __('Cloudflare Cache Monitor', 'cloudflare-cache-monitor'),
+            __('Cloudflare Cache Monitor', 'cloudflare-cache-monitor'),
             'manage_options',
             'codenz-ccm',
-            [$this, 'renderSettingsPage']
+            array($this, 'render_settings_page')
         );
     }
 
     /**
-     * Renderiza a página de configurações
+     * Render the settings page.
      */
-    public function renderSettingsPage()
+    public function render_settings_page()
     {
 ?>
         <div class="wrap">
-            <h1>Cloudflare Cache Monitor Settings</h1>
+            <h1><?php esc_html_e('Cloudflare Cache Monitor Settings', 'cloudflare-cache-monitor'); ?></h1>
             <form method="post" action="options.php">
                 <?php
-                settings_fields('codenz_ccm_options_group');
-                do_settings_sections('codenz_ccm');
+                settings_fields('ccm_options_group');
+                do_settings_sections('ccm');
                 submit_button();
                 ?>
             </form>
@@ -61,110 +81,141 @@ class SettingsPage
     }
 
     /**
-     * Registra as configurações
+     * Register settings.
      */
-    public function registerSettings()
+    public function register_settings()
     {
-        register_setting('codenz_ccm_options_group', 'codenz_ccm_options');
+        register_setting('ccm_options_group', 'ccm_options', array($this, 'sanitize_options'));
 
         add_settings_section(
-            'codenz_ccm_main_section',
-            'Configurações Principais',
+            'ccm_main_section',
+            __('Main Settings', 'cloudflare-cache-monitor'),
             null,
-            'codenz_ccm'
+            'ccm'
         );
 
         add_settings_field(
             'worker_url',
-            'Worker URL',
-            [$this, 'workerUrlCallback'],
-            'codenz_ccm',
-            'codenz_ccm_main_section'
+            __('Worker URL', 'cloudflare-cache-monitor'),
+            array($this, 'worker_url_callback'),
+            'ccm',
+            'ccm_main_section'
         );
 
         add_settings_field(
             'api_key',
-            'API Key',
-            [$this, 'apiKeyCallback'],
-            'codenz_ccm',
-            'codenz_ccm_main_section'
+            __('API Key', 'cloudflare-cache-monitor'),
+            array($this, 'api_key_callback'),
+            'ccm',
+            'ccm_main_section'
         );
     }
 
     /**
-     * Callback para o campo worker_url
+     * Sanitize options before saving.
+     *
+     * @param array $options Options to sanitize.
+     *
+     * @return array
      */
-    public function workerUrlCallback()
+    public function sanitize_options($options)
     {
-        $options = get_option('codenz_ccm_options');
+        if (isset($options['worker_url'])) {
+            $options['worker_url'] = esc_url_raw($options['worker_url']);
+        }
+        if (isset($options['api_key'])) {
+            $options['api_key'] = sanitize_text_field($options['api_key']);
+        }
+        return $options;
+    }
+
+    /**
+     * Callback for the worker_url field.
+     */
+    public function worker_url_callback()
+    {
+        $options     = get_option('ccm_options');
+        $worker_url  = isset($options['worker_url']) ? $options['worker_url'] : '';
     ?>
-        <input type="text" name="codenz_ccm_options[worker_url]" value="<?php echo esc_attr($options['worker_url'] ?? ''); ?>" size="50">
+        <input type="text" name="ccm_options[worker_url]" value="<?php echo esc_attr($worker_url); ?>" size="50">
     <?php
     }
 
     /**
-     * Callback para o campo api_key
+     * Callback for the api_key field.
      */
-    public function apiKeyCallback()
+    public function api_key_callback()
     {
-        $options = get_option('codenz_ccm_options');
-        $apiKey = $options['api_key'] ?? '';
+        $options = get_option('ccm_options');
+        $api_key = isset($options['api_key']) ? $options['api_key'] : '';
 
-        // Mascarar a API Key para exibição
-        if (!empty($apiKey)) {
-            $apiKeyMascarada = $this->tokenMasked($apiKey);
+        // Mask the API Key for display.
+        if (! empty($api_key)) {
+            $api_key_masked = $this->token_masked($api_key);
         } else {
-            $apiKeyMascarada = '';
+            $api_key_masked = '';
         }
     ?>
-        <input type="text" name="codenz_ccm_options[api_key]" value="<?php echo esc_attr($apiKeyMascarada); ?>" size="50">
+        <input type="text" name="ccm_options[api_key]" value="<?php echo esc_attr($api_key_masked); ?>" size="50">
 <?php
     }
 
     /**
-     * Função para mascarar o token de API
+     * Mask the API token for display.
+     *
+     * @param string $token         The API token.
+     * @param string $mask_char     The character to use for masking.
+     * @param int    $visible_start Number of visible characters at the start.
+     * @param int    $visible_end   Number of visible characters at the end.
+     *
+     * @return string
      */
-    private function tokenMasked($token, $mascaraChar = '*', $visibleStart = 4, $visibleEnd = 4)
+    private function token_masked($token, $mask_char = '*', $visible_start = 4, $visible_end = 4)
     {
-        $tokenLength = strlen($token);
+        $token_length = strlen($token);
 
-        // Certifique-se de que o token é longo o suficiente para ser mascarado
-        if ($tokenLength <= ($visibleStart + $visibleEnd)) {
-            return $token; // Retorna o token original se ele for muito curto
+        // Ensure the token is long enough to be masked.
+        if ($token_length <= ($visible_start + $visible_end)) {
+            return $token; // Return the original token if it's too short.
         }
 
-        // Define as partes visíveis no início e no final
-        $start = substr($token, 0, $visibleStart);
-        $end = substr($token, -$visibleEnd);
+        // Define the visible parts at the start and end.
+        $start = substr($token, 0, $visible_start);
+        $end   = substr($token, -$visible_end);
 
-        // Calcula quantos caracteres serão mascarados
-        $mascararParte = str_repeat($mascaraChar, $tokenLength - $visibleStart - $visibleEnd);
+        // Calculate how many characters will be masked.
+        $masked_part = str_repeat($mask_char, $token_length - $visible_start - $visible_end);
 
-        // Concatena a parte visível com a parte mascarada e o final visível
-        return $start . $mascararParte . $end;
+        // Concatenate the visible part with the masked part and the end visible.
+        return $start . $masked_part . $end;
     }
 
     /**
-     * Hook para manipular o salvamento das opções e garantir que o token original seja salvo
+     * Hook to handle saving options and ensure the original token is preserved.
+     *
+     * @param array $new_value The new option value.
+     * @param array $old_value The old option value.
+     *
+     * @return array
      */
-    public function preUpdateOptions($new_value, $old_value)
+    public function pre_update_options($new_value, $old_value)
     {
-        // Verifique se a chave de API foi modificada pelo usuário
+        // Check if the API key was modified by the user.
         if (isset($new_value['api_key']) && isset($old_value['api_key'])) {
-            $newApiKey = $new_value['api_key'];
-            $originalApiKey = $old_value['api_key'];
-            $maskedOriginalKey = $this->tokenMasked($originalApiKey);
+            $new_api_key          = $new_value['api_key'];
+            $original_api_key     = $old_value['api_key'];
+            $masked_original_key  = $this->token_masked($original_api_key);
 
-            // Verifique se a nova chave de API contém caracteres válidos
-            if ($this->isValidToken($newApiKey)) {
-                // Se a nova chave for igual à mascarada ou vazia, mantenha o valor original
-                if ($newApiKey === $maskedOriginalKey || empty($newApiKey)) {
-                    $new_value['api_key'] = $originalApiKey; // Mantém o token original
+            // Check if the new API key contains valid characters.
+            if ($this->is_valid_token($new_api_key)) {
+                // If the new key is equal to the masked or empty, keep the original value.
+                if ($new_api_key === $masked_original_key || empty($new_api_key)) {
+                    $new_value['api_key'] = $original_api_key; // Keep the original token.
                 }
             } else {
-                // Se o token contiver caracteres inválidos, mantenha o valor original
-                $new_value['api_key'] = $originalApiKey;
-                add_settings_error('codenz_ccm_options', 'invalid_api_key', 'O token de API contém caracteres inválidos e foi mantido o valor original.');
+                // If the token contains invalid characters, keep the original value.
+                $new_value['api_key'] = $original_api_key;
+                add_settings_error('ccm_options', 'invalid_api_key', __('The API token contains invalid characters and the original value was kept.', 'cloudflare-cache-monitor'));
             }
         }
 
@@ -172,12 +223,16 @@ class SettingsPage
     }
 
     /**
-     * Valida o token para garantir que ele contém apenas caracteres permitidos
-     * Permitimos apenas letras, números, hífens e underscores por exemplo
+     * Validate the token to ensure it contains only allowed characters.
+     * We allow only letters, numbers, hyphens, and underscores, for example.
+     *
+     * @param string $token The token to validate.
+     *
+     * @return bool
      */
-    private function isValidToken($token)
+    private function is_valid_token($token)
     {
-        // Expressão regular que permite apenas letras, números, hífens e underscores
-        return preg_match('/^[a-zA-Z0-9-_]+$/', $token);
+        // Regular expression that allows only letters, numbers, hyphens, and underscores.
+        return (bool) preg_match('/^[a-zA-Z0-9-_]+$/', $token);
     }
 }
