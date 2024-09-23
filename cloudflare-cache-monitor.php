@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: Cloudflare Cache Monitor
- * Plugin URI:  https://github.com/codenz-br/cloudflare-cache-monitor
+ * Plugin URI:  https://github.com/jogajunto/cloudflare-cache-monitor
  * Description: A plugin to monitor Cloudflare cache purges and validate content updates for WordPress sites.
  * Version:     1.0.0
  * Author:      Rafael de Araujo

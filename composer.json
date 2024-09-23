@@ -1,5 +1,5 @@
 {
-  "name": "codenz-br/cloudflare-cache-monitor",
+  "name": "jogajunto/cloudflare-cache-monitor",
   "version": "1.0.0",
   "description": "A plugin to monitor Cloudflare cache purges and validate content updates for WordPress sites.",
   "autoload": {
