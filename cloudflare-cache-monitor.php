@@ -28,6 +28,8 @@ define('CCM_PLUGIN_URL', plugin_dir_url(__FILE__));
  */
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
+} elseif (file_exists(dirname(__DIR__, 3) . '/vendor/autoload.php')) {
+    require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
 } else {
     error_log(__('Autoloader not found. Please run "composer install".', 'cloudflare-cache-monitor'));
     return;
