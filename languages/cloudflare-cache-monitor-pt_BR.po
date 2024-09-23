@@ -1,0 +1,60 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2024-09-23 00:16-0300\n"
+"PO-Revision-Date: 2024-09-23 00:16-0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e ;_x;esc_html__ ;esc_html_e;esc_attr__;esc_attr_e;_n:1,2 ;_nx:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: vendor\n"
+
+#: cloudflare-cache-monitor.php:32
+msgid "Autoloader not found. Please run \"composer install\"."
+msgstr "Autoloader não encontrado. Por favor, execute \"composer install\"."
+
+#: src/CacheMonitor.php:102
+#, php-format
+msgid "Error sending data to Cloudflare Worker: %s"
+msgstr "Erro ao enviar dados para o Cloudflare Worker: %s"
+
+#: src/CacheMonitor.php:104
+msgid "Data successfully sent to Cloudflare Worker."
+msgstr "Dados enviados com sucesso para o Cloudflare Worker."
+
+#: src/CacheMonitor.php:107
+#, php-format
+msgid "Worker response: %s"
+msgstr "Resposta do Worker: %s"
+
+#: src/SettingsPage.php:56 src/SettingsPage.php:57
+msgid "Cloudflare Cache Monitor"
+msgstr "Monitor de Cache do Cloudflare"
+
+#: src/SettingsPage.php:71
+msgid "Cloudflare Cache Monitor Settings"
+msgstr "Configurações do Monitor de Cache do Cloudflare"
+
+#: src/SettingsPage.php:92
+msgid "Main Settings"
+msgstr "Configurações Principais"
+
+#: src/SettingsPage.php:99
+msgid "Worker URL"
+msgstr "URL do Worker"
+
+#: src/SettingsPage.php:107
+msgid "API Key"
+msgstr "Chave API"
+
+#: src/SettingsPage.php:218
+msgid ""
+"The API token contains invalid characters and the original value was kept."
+msgstr ""
+"O token da API contém caracteres inválidos e o valor original foi mantido."

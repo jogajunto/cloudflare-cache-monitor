@@ -32,7 +32,17 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 }
 
 /**
- * Inicializar o plugin
+ * Loading text domain translation
+ */
+function ccm_load_textdomain()
+{
+    load_plugin_textdomain('cloudflare-cache-monitor', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+}
+add_action('plugins_loaded', 'ccm_load_textdomain');
+
+
+/**
+ * Initialize the plugin.
  */
 function ccm_init()
 {
