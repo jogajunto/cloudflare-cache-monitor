@@ -96,6 +96,8 @@ class CacheMonitor
             'urls'       => $urls,
         );
 
+        error_log('Data to be sent to the Worker: ' . wp_json_encode($data));
+
         // Configure the HTTP request.
         $args = array(
             'body'        => wp_json_encode($data),
