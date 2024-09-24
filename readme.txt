@@ -4,7 +4,7 @@ Tags: cloudflare, cache, monitor, wordpress
 Requires at least: 5.0
 Tested up to: 6.3
 Requires PHP: 5.6
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,6 +19,7 @@ Cloudflare Cache Monitor is a plugin that integrates with Cloudflare to monitor 
 - Sends purge requests to a Cloudflare Worker.
 - Validates content updates after cache purge.
 - Provides a settings page to configure the Worker URL and API Key.
+- **New in v1.1.0:** Sends `post_name` to the Worker for precise URL filtering.
 
 == Installation ==
 
@@ -42,13 +43,21 @@ Yes, it is designed to work alongside other caching plugins, but its primary fun
 
 == Changelog ==
 
+= 1.1.0 =
+* **New Feature:** Added support for sending `post_name` to the Cloudflare Worker, allowing for precise URL filtering and improved cache validation.
+* **Bug Fix:** Corrected the `$purge_time` to use UTC time (`gmdate`), ensuring consistency across different time zones.
+* **Improvement:** Adjusted autoloader to prioritize the global autoloader with a fallback to the plugin's autoloader for better compatibility.
+* **Enhancement:** Added detailed logging using `error_log` for improved debugging and validation.
+* **Update:** Updated `composer.json` and `.gitignore` files, and removed `composer.lock` from the repository to streamline development.
+* **Fix:** Corrected the plugin URI and package name in `composer.json` and the main plugin file to reflect the correct repository.
+
 = 1.0.0 =
 * Initial release of Cloudflare Cache Monitor.
 
 == Upgrade Notice ==
 
-= 1.0.0 =
-* Initial release.
+= 1.1.0 =
+This update includes new features, important bug fixes, and improvements. It is recommended to update to this version for enhanced functionality and stability.
 
 == License ==
 
