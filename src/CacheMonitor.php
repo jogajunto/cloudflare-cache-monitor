@@ -77,16 +77,15 @@ class CacheMonitor
 
         error_log(sprintf('Purge Time: %d', $purge_time));
 
-        // Get post by ID
-        $post = get_post($post_id);
+        // Get post_name by get_post_field
+        $post_name = get_post_field('post_name', $post_id);
 
-        // Get post_name
-        if (!$post) {
-            error_log(sprintf('Post com ID %d não encontrado.', $post_id));
-            $post_name = '';
-        } else {
-            $post_name = $post->post_name;
+        // Validate exists post_name
+        if ($post_name) {
             error_log(sprintf('Post Name: %s', $post_name));
+        } else {
+            $post_name = '';
+            error_log(sprintf('Post Name está vazio ou não encontrado para o Post ID: %d', $post_id));
         }
 
         // Data to be sent to the Worker.
