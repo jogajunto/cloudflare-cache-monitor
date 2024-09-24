@@ -75,10 +75,13 @@ class CacheMonitor
         // Get current timestamp.
         $purge_time = strtotime(gmdate('Y-m-d H:i:s'));
 
+        // Get post_name
+        $post_name = get_post($post_id)->post_name;
+
         // Data to be sent to the Worker.
         $data = array(
             'post_id'    => $post_id,
-            'post_name'  => get_post($post_id)->post_name,
+            'post_name'  => $post_name,
             'purge_time' => $purge_time,
             'urls'       => $urls,
         );
@@ -103,6 +106,7 @@ class CacheMonitor
             error_log(sprintf(__('Error sending data to Cloudflare Worker: %s', 'cloudflare-cache-monitor'), $response->get_error_message()));
         } else {
             error_log(__('Data successfully sent to Cloudflare Worker.', 'cloudflare-cache-monitor'));
+            error_log(sprintf(__('Post Name: %s', 'cloudflare-cache-monitor'), $post_name));
             // Optional: Log the Worker's response.
             $response_body = wp_remote_retrieve_body($response);
             error_log(sprintf(__('Worker response: %s', 'cloudflare-cache-monitor'), $response_body));
