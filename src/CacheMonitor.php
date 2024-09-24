@@ -75,17 +75,17 @@ class CacheMonitor
         // Get current timestamp.
         $purge_time = strtotime(gmdate('Y-m-d H:i:s'));
 
-        error_log(sprintf('Purge Time: %d', $purge_time));
+        error_log(sprintf(__('Purge Time: %d', 'cloudflare-cache-monitor'), $purge_time));
 
         // Get post_name by get_post_field
         $post_name = get_post_field('post_name', $post_id);
 
         // Validate exists post_name
         if ($post_name) {
-            error_log(sprintf('Post Name: %s', $post_name));
+            error_log(sprintf(__('Post Name: %s', 'cloudflare-cache-monitor'), $post_name));
         } else {
             $post_name = '';
-            error_log(sprintf('Post Name está vazio ou não encontrado para o Post ID: %d', $post_id));
+            error_log(sprintf(__('Post Name está vazio ou não encontrado para o Post ID: %d', 'cloudflare-cache-monitor'), $post_id));
         }
 
         // Data to be sent to the Worker.
