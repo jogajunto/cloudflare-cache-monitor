@@ -78,6 +78,7 @@ class CacheMonitor
         // Data to be sent to the Worker.
         $data = array(
             'post_id'    => $post_id,
+            'post_name'  => get_post($post_id)->post_name,
             'purge_time' => $purge_time,
             'urls'       => $urls,
         );
