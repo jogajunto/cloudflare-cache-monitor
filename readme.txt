@@ -4,7 +4,7 @@ Tags: cloudflare, cache, monitor, wordpress
 Requires at least: 5.0
 Tested up to: 6.3
 Requires PHP: 5.6
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Cloudflare Cache Monitor is a plugin that integrates with Cloudflare to monitor 
 - Sends purge requests to a Cloudflare Worker.
 - Validates content updates after cache purge.
 - Provides a settings page to configure the Worker URL and API Key.
-- **New in v1.1.0:** Sends `post_name` to the Worker for precise URL filtering.
+- **New in v1.2.0:** Added filters to define custom server address and modify purge URLs.
 
 == Installation ==
 
@@ -43,6 +43,11 @@ Yes, it is designed to work alongside other caching plugins, but its primary fun
 
 == Changelog ==
 
+= 1.2.0 =
+* **New Feature:** Added `ccm_define_server_address` filter to define a custom server address.
+* **Enhancement:** Introduced `ccm_modify_purge_urls` filter to modify purge URLs based on the server address.
+* **Improvement:** Added logging of URLs after applying the custom filter for debugging purposes.
+
 = 1.1.0 =
 * **New Feature:** Added support for sending `post_name` to the Cloudflare Worker, allowing for precise URL filtering and improved cache validation.
 * **Bug Fix:** Corrected the `$purge_time` to use UTC time (`gmdate`), ensuring consistency across different time zones.
@@ -56,10 +61,9 @@ Yes, it is designed to work alongside other caching plugins, but its primary fun
 
 == Upgrade Notice ==
 
-= 1.1.0 =
-This update includes new features, important bug fixes, and improvements. It is recommended to update to this version for enhanced functionality and stability.
+= 1.2.0 =
+This update introduces new filters for custom server address and purge URL modification, enhancing flexibility and control over cache management. Updating is recommended for improved functionality.
 
 == License ==
 
 This plugin is licensed under the GPLv2 or later.
-
