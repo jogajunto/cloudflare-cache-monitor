@@ -72,6 +72,28 @@ class CacheMonitor
      */
     public function handle_purge_by_url($urls, $post_id)
     {
+        // Check if the WP_SITEURL constant is defined in the environment
+        if (defined('WP_SITEURL') && WP_SITEURL) {
+            $current_site_url = WP_SITEURL;
+        } else {
+            $current_site_url = get_site_url();
+        }
+
+        // Remove the protocol from the current URL to get only the domain
+        $parsed_url = parse_url($current_site_url);
+        $current_domain = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+
+        // Pass the server address via hook so the developer can define it
+        $server_address = apply_filters('ccm_define_server_address', '');
+
+        // If a server address is defined, apply the replacement logic
+        if ($server_address) {
+            $urls = apply_filters('ccm_modify_purge_urls', $urls, $post_id, $current_domain, $server_address);
+        }
+
+        // Log to check the URLs after applying the filter
+        error_log('URLs after applying custom filter: ' . wp_json_encode($urls));
+
         // Get current timestamp.
         $purge_time = strtotime(gmdate('Y-m-d H:i:s'));
 
