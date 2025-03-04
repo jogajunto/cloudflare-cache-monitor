@@ -1,6 +1,6 @@
 {
   "name": "jogajunto/cloudflare-cache-monitor",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "type": "wordpress-plugin",
   "description": "A plugin to monitor Cloudflare cache purges and validate content updates for WordPress sites.",
   "autoload": {
