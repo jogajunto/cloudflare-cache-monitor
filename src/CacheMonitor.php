@@ -72,12 +72,8 @@ class CacheMonitor
      */
     public function handle_purge_by_url($urls, $post_id)
     {
-        // Check if the WP_SITEURL constant is defined in the environment
-        if (defined('WP_SITEURL') && WP_SITEURL) {
-            $current_site_url = WP_SITEURL;
-        } else {
-            $current_site_url = get_site_url();
-        }
+        // Log $current_site_url
+        Logger::log(sprintf(__('Current Site URL: %s', 'cloudflare-cache-monitor'), $current_site_url));
 
         // Remove the protocol from the current URL to get only the domain
         $parsed_url = parse_url($current_site_url);
@@ -92,23 +88,26 @@ class CacheMonitor
         }
 
         // Log to check the URLs after applying the filter
-        error_log('URLs after applying custom filter: ' . wp_json_encode($urls));
+        Logger::log('URLs after applying custom filter: ' . wp_json_encode($urls));
 
         // Get current timestamp.
         $purge_time = strtotime(gmdate('Y-m-d H:i:s'));
 
-        error_log(sprintf(__('Purge Time: %d', 'cloudflare-cache-monitor'), $purge_time));
+        Logger::log(sprintf(__('Purge Time: %d', 'cloudflare-cache-monitor'), $purge_time));
 
         // Get post_name by get_post_field
         $post_name = get_post_field('post_name', $post_id);
 
         // Validate exists post_name
         if ($post_name) {
-            error_log(sprintf(__('Post Name: %s', 'cloudflare-cache-monitor'), $post_name));
+            Logger::log(sprintf(__('Post Name: %s', 'cloudflare-cache-monitor'), $post_name));
         } else {
             $post_name = '';
-            error_log(sprintf(__('Post Name está vazio ou não encontrado para o Post ID: %d', 'cloudflare-cache-monitor'), $post_id));
+            Logger::log(sprintf(__('Post Name está vazio ou não encontrado para o Post ID: %d', 'cloudflare-cache-monitor'), $post_id));
         }
+        
+        // Log the custom posts page URL.
+        Logger::log(sprintf(__('Custom Posts Page URL: %s', 'cloudflare-cache-monitor'), $custom_posts_page));
 
         // Data to be sent to the Worker.
         $data = array(
@@ -118,7 +117,7 @@ class CacheMonitor
             'urls'       => $urls,
         );
 
-        error_log('Data to be sent to the Worker: ' . wp_json_encode($data));
+        Logger::log('Data to be sent to the Worker: ' . wp_json_encode($data));
 
         // Configure the HTTP request.
         $args = array(
@@ -137,12 +136,12 @@ class CacheMonitor
 
         // Check for errors.
         if (is_wp_error($response)) {
-            error_log(sprintf(__('Error sending data to Cloudflare Worker: %s', 'cloudflare-cache-monitor'), $response->get_error_message()));
+            Logger::log(sprintf(__('Error sending data to Cloudflare Worker: %s', 'cloudflare-cache-monitor'), $response->get_error_message()));
         } else {
-            error_log(__('Data successfully sent to Cloudflare Worker.', 'cloudflare-cache-monitor'));
+            Logger::log(__('Data successfully sent to Cloudflare Worker.', 'cloudflare-cache-monitor'));
             // Optional: Log the Worker's response.
             $response_body = wp_remote_retrieve_body($response);
-            error_log(sprintf(__('Worker response: %s', 'cloudflare-cache-monitor'), $response_body));
+            Logger::log(sprintf(__('Worker response: %s', 'cloudflare-cache-monitor'), $response_body));
         }
 
         return $urls;
