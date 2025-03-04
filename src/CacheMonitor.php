@@ -72,6 +72,9 @@ class CacheMonitor
      */
     public function handle_purge_by_url($urls, $post_id)
     {
+        // Check if the WP_SITEURL constant is defined in the environment
+        $current_site_url = defined('WP_SITEURL') && WP_SITEURL ? WP_SITEURL : get_site_url();
+
         // Log $current_site_url
         Logger::log(sprintf(__('Current Site URL: %s', 'cloudflare-cache-monitor'), $current_site_url));
 
@@ -105,7 +108,16 @@ class CacheMonitor
             $post_name = '';
             Logger::log(sprintf(__('Post Name está vazio ou não encontrado para o Post ID: %d', 'cloudflare-cache-monitor'), $post_id));
         }
-        
+
+        // Get the custom posts page URL.
+        $custom_posts_page = get_option('ccm_options')['posts_page_url'] ?? 'empty';
+        $custom_posts_page = apply_filters('ccm_define_posts_page', $custom_posts_page);
+
+        // Add the custom posts page URL to the list of URLs to be purged.
+        if (!empty($custom_posts_page) && filter_var($custom_posts_page, FILTER_VALIDATE_URL)) {
+            $urls[] = $custom_posts_page;
+        }
+
         // Log the custom posts page URL.
         Logger::log(sprintf(__('Custom Posts Page URL: %s', 'cloudflare-cache-monitor'), $custom_posts_page));
 
